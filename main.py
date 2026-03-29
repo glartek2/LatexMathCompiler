@@ -2,6 +2,7 @@ from latex_lexer import LatexLexer
 from latex_parser import LatexParser
 from utils import print_ast
 from latex_type_checker import TypeChecker
+from latex_interpreter import Interpreter
 
 
 def main():
@@ -43,6 +44,15 @@ def main():
         print("\nProgram is semantically correct")
 
 
+    interpreter = Interpreter()
+
+    try:
+        result = interpreter.visit(ast)
+        print("Result:", result)
+    except Exception as e:
+        print("Runtime error:", e)
+
+
 if __name__ == "__main__":
     main()
-    
+
