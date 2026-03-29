@@ -1,6 +1,7 @@
 from latex_lexer import LatexLexer
 from latex_parser import LatexParser
 from utils import print_ast
+from latex_type_checker import TypeChecker
 
 
 def main():
@@ -31,6 +32,15 @@ def main():
         print_ast(ast)
     except Exception as e:
         print("Parser error:", e)
+
+    print("\nType check:")
+    checker = TypeChecker(ast)
+    errors = checker.check()
+
+    if errors:
+        print("\nProgram has semantic errors")
+    else:
+        print("\nProgram is semantically correct")
 
 
 if __name__ == "__main__":
