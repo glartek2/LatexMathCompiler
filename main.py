@@ -1,37 +1,60 @@
+from fastapi import FastAPI
+from pydantic import BaseModel
+
 from latex_lexer import LatexLexer
 from latex_parser import LatexParser
-from utils import print_ast
 from latex_type_checker import TypeChecker
 from latex_interpreter import Interpreter
+<<<<<<< Updated upstream
+=======
+
+from utils import print_ast
+>>>>>>> Stashed changes
 
 
-def main():
-    filename = "examples/ex1"
+app = FastAPI()
 
+
+class RequestModel(BaseModel):
+    expression: str
+    variables: dict = {}
+
+
+class ResponseModel(BaseModel):
+    result: float | None = None
+    errors: list[str] | None = None
+
+
+@app.post("/calculate", response_model=ResponseModel)
+def calculate(req: RequestModel):
     try:
-        with open(filename, "r") as f:
-            text = f.read()
-    except FileNotFoundError:
-        print(f"File {filename} not found")
-        return
+        lexer = LatexLexer()
+        tokens = list(lexer.tokenize(req.expression))
 
-    print("Input:")
-    print(text)
-
-    lexer = LatexLexer()
-
-    print("\nTokens:")
-    tokens = list(lexer.tokenize(text))
-    for tok in tokens:
-        print(f"{tok.type}: {tok.value}")
-
-    parser = LatexParser()
-
-    print("\nAST:")
-    try:
+        parser = LatexParser()
         ast = parser.parse(iter(tokens))
+
         print_ast(ast)
+
+        checker = TypeChecker(ast)
+        errors = checker.check()
+
+        if errors:
+            return ResponseModel(result=None, errors=errors)
+
+        interpreter = Interpreter()
+
+        for name, value in req.variables.items():
+            interpreter.memory.put(name, value)
+
+        # interpreter.memory.put("pi", 3.141592653589793)
+
+        result = interpreter.visit(ast)
+
+        return ResponseModel(result=result, errors=None)
+
     except Exception as e:
+<<<<<<< Updated upstream
         print("Parser error:", e)
 
     print("\nType check:")
@@ -56,3 +79,6 @@ def main():
 if __name__ == "__main__":
     main()
 
+=======
+        return ResponseModel(result=None, errors=[str(e)])
+>>>>>>> Stashed changes
