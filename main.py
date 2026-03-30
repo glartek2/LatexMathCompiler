@@ -5,12 +5,8 @@ from latex_lexer import LatexLexer
 from latex_parser import LatexParser
 from latex_type_checker import TypeChecker
 from latex_interpreter import Interpreter
-<<<<<<< Updated upstream
-=======
 
 from utils import print_ast
->>>>>>> Stashed changes
-
 
 app = FastAPI()
 
@@ -54,31 +50,6 @@ def calculate(req: RequestModel):
         return ResponseModel(result=result, errors=None)
 
     except Exception as e:
-<<<<<<< Updated upstream
         print("Parser error:", e)
 
-    print("\nType check:")
-    checker = TypeChecker(ast)
-    errors = checker.check()
-
-    if errors:
-        print("\nProgram has semantic errors")
-    else:
-        print("\nProgram is semantically correct")
-
-
-    interpreter = Interpreter()
-
-    try:
-        result = interpreter.visit(ast)
-        print("Result:", result)
-    except Exception as e:
-        print("Runtime error:", e)
-
-
-if __name__ == "__main__":
-    main()
-
-=======
         return ResponseModel(result=None, errors=[str(e)])
->>>>>>> Stashed changes
